@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Students Data</title>
+     <link rel="stylesheet" href="style.css">
+     <script type="module" src="db-module.js"></script>
+</head>
+
+<body>
+     <form>
+          <label for="name">Name</label><br>
+          <input type="text" id="name" name="name" required><br>
+
+          <label for="fname">Father's Name</label><br>
+          <input type="text" id="fname" name="fname" required><br>
+
+          <label for="phone">Phone Number</label><br>
+          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required><br>
+
+          <label for="course">Course</label><br>
+          <input type="text" id="course" name="course" required><br>
+
+          <label for="adm-date">Admission Date</label><br>
+          <input type="date" id="adm-date" name="adm-date" required><br>
+
+          <label for="end-date">Course Completion Date</label><br>
+          <input type="date" id="end-date" name="end-date" required><br>
+
+          <label for="fees">Fees</label><br>
+          <input type="number" id="fees" name="fees" min="0" required><br>
+
+          <label for="donutCheck">Are you a donut eater?</label><br>
+          <input type="text" id="donutCheck" name="donutCheck">
+
+          <button type="submit" id="submitBtn">Submit</button>
+          <button type="button" id="deleteBtn">Delete</button>
+          <button type="button" id="updateBtn">Update</button>
+     </form>
+
+     <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+          import { getDatabase, ref, set, update, remove } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+          // Your web app's Firebase configuration
+          const firebaseConfig = {
+               apiKey: "AIzaSyDcDcEAaxRb7-qNEjixGu52ntY_8vRCXg4",
+               authDomain: "students-data-id.firebaseapp.com",
+               databaseURL: "https://students-data-id-default-rtdb.asia-southeast1.firebasedatabase.app",
+               projectId: "students-data-id",
+               storageBucket: "students-data-id.appspot.com",
+               messagingSenderId: "453034974867",
+               appId: "1:453034974867:web:b8e6623cf1f0d3659b7766"
+          };
+
+          // Initialize Firebase
+          const app = initializeApp(firebaseConfig);
+          const db = getDatabase(app);
+
+          // Form elements
+          const name = document.getElementById("name");
+          const fname = document.getElementById("fname");
+          const phone = document.getElementById("phone");
+          const course = document.getElementById("course");
+          const admDate = document.getElementById("adm-date");
+          const endDate = document.getElementById("end-date");
+          const fees = document.getElementById("fees");
+          const donutCheck = document.getElementById("donutCheck");
+
+          const submitBtn = document.getElementById("submitBtn");
+          const deleteBtn = document.getElementById("deleteBtn");
+          const updateBtn = document.getElementById("updateBtn");
+
+          // Add Data
+          submitBtn.addEventListener("click", (e) => {
+               e.preventDefault();
+               if (validateForm() && donutCheck.value === "Ille") {
+                    addData();
+               } else {
+                    alert("Please fill all the fields correctly.");
+               }
+          });
+
+          // Delete Data
+          deleteBtn.addEventListener("click", (e) => {
+               e.preventDefault();
+               if (name.value && donutCheck.value === "Ille") {
+                    deleteData();
+               } else {
+                    alert("Name is required to delete a record.");
+               }
+          });
+
+          // Update Data
+          updateBtn.addEventListener("click", (e) => {
+               e.preventDefault();
+               if (name.value && donutCheck.value === "Ille") {
+                    updateData();
+               } else {
+                    alert("Name is required to update a record.");
+               }
+          });
+
+          // Form validation
+          function validateForm() {
+               return name.value && fname.value && phone.value.match(/[0-9]{10}/) && course.value && admDate.value && endDate.value && fees.value >= 0;
+          }
+
+          // Add student data to Firebase
+          function addData() {
+               set(ref(db, "students/" + name.value), {
+                    name: name.value,
+                    fname: fname.value,
+                    phone: phone.value,
+                    course: course.value,
+                    admDate: admDate.value,
+                    endDate: endDate.value,
+                    fees: fees.value
+               })
+               .then(() => {
+                    alert("Data added successfully");
+                    clearForm();
+               })
+               .catch((error) => {
+                    alert("Failed to add data: " + error.message);
+               });
+          }
+
+          // Delete student data from Firebase
+          function deleteData() {
+               remove(ref(db, "students/" + name.value))
+               .then(() => {
+                    alert("Data deleted successfully");
+                    clearForm();
+               })
+               .catch((error) => {
+                    alert("Failed to delete data: " + error.message);
+               });
+          }
+
+          // Update student data in Firebase
+          function updateData() {
+               update(ref(db, "students/" + name.value), {
+                    fname: fname.value,
+                    phone: phone.value,
+                    course: course.value,
+                    admDate: admDate.value,
+                    endDate: endDate.value,
+                    fees: fees.value
+               })
+               .then(() => {
+                    alert("Data updated successfully");
+                    clearForm();
+               })
+               .catch((error) => {
+                    alert("Failed to update data: " + error.message);
+               });
+          }
+
+          // Clear form after submission
+          function clearForm() {
+               name.value = "";
+               fname.value = "";
+               phone.value = "";
+               course.value = "";
+               admDate.value = "";
+               endDate.value = "";
+               fees.value = "";
+          }
+     </script>
+</body>
+
+</html>
