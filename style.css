@@ -17,6 +17,10 @@ form {
     align-content: center;
 }
 
+h1 {
+     margin: 5px;
+}
+
 label {
     display: inline-block;
     margin-bottom: 5px;
